@@ -30,8 +30,8 @@ WAIT_TIMEOUT = 10000     # 页面元素等待超时时间（毫秒）
 PAGE_LOAD_DELAY = 3      # 页面加载延迟时间（秒）
 
 # XServer登录配置
-LOGIN_EMAIL = os.getenv("casaos@drst.nyc.mn")
-LOGIN_PASSWORD = os.getenv("Andyzhou198611@")
+LOGIN_EMAIL = os.getenv("XSERVER_EMAIL")
+LOGIN_PASSWORD = os.getenv("XSERVER_PASSWORD")
 TARGET_URL = "https://secure.xserver.ne.jp/xapanel/login/xmgame"
 
 # =====================================================================
@@ -55,13 +55,13 @@ def load_cloud_mail_config():
 
 # 加载并提取cloudmail配置
 CLOUD_MAIL_CONFIG = load_cloud_mail_config() or {}
-CLOUDMAIL_API_BASE_URL = CLOUD_MAIL_CONFIG.get("https://drst.nyc.mn/")
-CLOUDMAIL_EMAIL = CLOUD_MAIL_CONFIG.get("casaos@drst.nyc.mn")
-CLOUDMAIL_PASSWORD = CLOUD_MAIL_CONFIG.get("Andyzhou198611@")
-CLOUDMAIL_JWT_SECRET = CLOUD_MAIL_CONFIG.get("Andyzhou198611@")
-CLOUDMAIL_SEND_EMAIL = CLOUD_MAIL_CONFIG.get("True")
-CLOUDMAIL_TO_EMAIL = CLOUD_MAIL_CONFIG.get("casaos2025@cm.edu.kg")
-CLOUDMAIL_SUBJECT = CLOUD_MAIL_CONFIG.get("cloudmail")
+CLOUDMAIL_API_BASE_URL = CLOUD_MAIL_CONFIG.get("API_BASE_URL")
+CLOUDMAIL_EMAIL = CLOUD_MAIL_CONFIG.get("EMAIL")
+CLOUDMAIL_PASSWORD = CLOUD_MAIL_CONFIG.get("PASSWORD")
+CLOUDMAIL_JWT_SECRET = CLOUD_MAIL_CONFIG.get("JWT_SECRET")
+CLOUDMAIL_SEND_EMAIL = CLOUD_MAIL_CONFIG.get("SEND_EMAIL")
+CLOUDMAIL_TO_EMAIL = CLOUD_MAIL_CONFIG.get("TO_EMAIL")
+CLOUDMAIL_SUBJECT = CLOUD_MAIL_CONFIG.get("SUBJECT")
 CLOUDMAIL_LOCAL_FILTER = True  # 启用本地过滤（避免日文主题在API中识别失败）
 
 # =====================================================================
@@ -1131,13 +1131,9 @@ class XServerAutoLogin:
             if not await self.perform_login():
                 return False
             
-            # 步骤5：检查是否需要验证
-            verification_result = await self.handle_verification_page()
-            if verification_result:
-                print("✅ 验证流程已处理")
-                await asyncio.sleep(3)  # 等待验证完成后的页面跳转
-            else:
-                print("⚠️ 验证流程未完成，可能需要手动处理")
+            # 步骤 5：【修改处】跳过验证码处理，直接检查登录结果
+            print("⏭️ 已关闭平台验证，跳过验证码获取步骤")
+            await asyncio.sleep(5) # 给页面跳转一点缓冲时间
             
             # 步骤6：检查登录结果
             if not await self.handle_login_result():
